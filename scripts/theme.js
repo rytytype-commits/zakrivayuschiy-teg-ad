@@ -1,9 +1,10 @@
 /* Этот скрипт использует имена классов theme-menu__button, theme-dark, theme-light и theme-auto;
 еще атрибуты disabled и data-theme. Поэтому их нельзя менять в HTML. */
-
 function changeTheme(theme) {
   document.documentElement.className = '';
-  document.documentElement.classList.add(`theme-${theme}`);
+  if (theme !== 'auto') {
+    document.documentElement.classList.add(`theme-${theme}`);
+  }
   localStorage.setItem('theme', theme);
 }
 
@@ -28,18 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if ([...root.classList].includes('theme-light')) {
-    setDisabled('light');
-  } else if ([...root.classList].includes('theme-dark')) {
-    setDisabled('dark');
-  } else {
-    setDisabled('auto');
-  }
+  // Определяем текущую тему
+  const savedTheme = localStorage.getItem('theme') || 'auto';
+  setDisabled(savedTheme);
 
   themeButtons.forEach((button) => {
-    button.onclick = () => {
-      changeTheme(button.getAttribute('data-theme'));
-      setDisabled(button.getAttribute('data-theme'));
-    };
+    button.addEventListener('click', () => {
+      const theme = button.getAttribute('data-theme');
+      changeTheme(theme);
+      setDisabled(theme);
+    });
   });
 });
